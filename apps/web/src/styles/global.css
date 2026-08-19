@@ -1,0 +1,17 @@
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+/* dvh keeps the map correct while mobile browser chrome collapses. */
+:root {
+  --app-height: 100dvh;
+}
+
+/* MapLibre's controls sit above the map canvas but below Mantine overlays. */
+.maplibregl-ctrl-bottom-left,
+.maplibregl-ctrl-bottom-right {
+  padding-bottom: env(safe-area-inset-bottom);
+}

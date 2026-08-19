@@ -1,0 +1,7 @@
+packages:
+  - 'apps/*'
+  - 'packages/*'
+allowBuilds:
+  # esbuild resolves its native binary from the @esbuild/<platform> optional
+  # dependency, so its postinstall script is not needed.
+  esbuild: false
