@@ -60,6 +60,9 @@ export const errorHandler = fp(async (app) => {
     }
 
     if (error instanceof HttpError) {
+      // 5xx means we failed, not the caller, so keep the cause in the log.
+      if (error.statusCode >= 500) request.log.error({ err: error }, 'upstream failure');
+
       return reply.status(error.statusCode).send({
         error: { code: error.code, message: error.message, details: error.details },
       });

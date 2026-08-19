@@ -39,6 +39,8 @@ interface PoiLayersProps {
   activeCategoryIds: string[];
   selectedPoiId: string | null;
   onSelect: (id: string | null) => void;
+  /** Turned off while another tool owns map clicks, such as POI placement. */
+  interactive: boolean;
 }
 
 export function PoiLayers({
@@ -47,6 +49,7 @@ export function PoiLayers({
   activeCategoryIds,
   selectedPoiId,
   onSelect,
+  interactive,
 }: PoiLayersProps) {
   const { map } = useMap();
   const colorScheme = useComputedColorScheme('light');
@@ -160,7 +163,7 @@ export function PoiLayers({
   }, [onSelect]);
 
   useEffect(() => {
-    if (!map) return;
+    if (!map || !interactive) return;
 
     const selectFeature = (event: MapLayerMouseEvent) => {
       const id = event.features?.[0]?.properties?.id;
@@ -192,7 +195,7 @@ export function PoiLayers({
       map.off('mouseenter', CIRCLE_LAYER, showPointer);
       map.off('mouseleave', CIRCLE_LAYER, hidePointer);
     };
-  }, [map]);
+  }, [map, interactive]);
 
   // Frame the POIs once, the first time any arrive.
   const fittedRef = useRef(false);

@@ -26,6 +26,9 @@ const envSchema = z.object({
   OPENROUTESERVICE_API_KEY: optional(z.string().min(1)),
   OPENROUTESERVICE_BASE_URL: z.string().url().default('https://api.openrouteservice.org'),
 
+  // Photon needs no key; override only to point at a self-hosted instance.
+  PHOTON_BASE_URL: z.string().url().default('https://photon.komoot.io'),
+
   // Auth arrives in phase P8.
   GOOGLE_CLIENT_ID: optional(z.string().min(1)),
   GOOGLE_CLIENT_SECRET: optional(z.string().min(1)),

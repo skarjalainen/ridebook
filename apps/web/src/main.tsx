@@ -4,6 +4,7 @@ import { createRoot } from 'react-dom/client';
 // Import order matters: Mantine's layers must be registered before MapLibre's
 // plain stylesheet, and app overrides come last.
 import '@mantine/core/styles.css';
+import '@mantine/dates/styles.css';
 import '@mantine/notifications/styles.css';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import './styles/global.css';

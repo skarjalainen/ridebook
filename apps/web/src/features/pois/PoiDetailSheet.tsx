@@ -1,6 +1,7 @@
 import {
   ActionIcon,
   Badge,
+  Button,
   Drawer,
   Group,
   Paper,
@@ -11,7 +12,7 @@ import {
   Title,
 } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
-import { IconCheck, IconX } from '@tabler/icons-react';
+import { IconCheck, IconPencil, IconTrash, IconX } from '@tabler/icons-react';
 import dayjs from 'dayjs';
 import type { PoiCategory, PoiFeature } from '@ridebook/shared';
 import { categoryVisual } from './categoryVisuals';
@@ -20,9 +21,17 @@ interface PoiDetailSheetProps {
   poi: PoiFeature;
   category: PoiCategory | undefined;
   onClose: () => void;
+  onEdit: () => void;
+  onDelete: () => void;
 }
 
-export function PoiDetailSheet({ poi, category, onClose }: PoiDetailSheetProps) {
+export function PoiDetailSheet({
+  poi,
+  category,
+  onClose,
+  onEdit,
+  onDelete,
+}: PoiDetailSheetProps) {
   const isMobile = useMediaQuery('(max-width: 48em)');
 
   if (isMobile) {
@@ -37,7 +46,7 @@ export function PoiDetailSheet({ poi, category, onClose }: PoiDetailSheetProps) 
         lockScroll={false}
         title={<Title order={5}>{poi.properties.name}</Title>}
       >
-        <PoiDetailContent poi={poi} category={category} />
+        <PoiDetailContent poi={poi} category={category} onEdit={onEdit} onDelete={onDelete} />
       </Drawer>
     );
   }
@@ -61,7 +70,7 @@ export function PoiDetailSheet({ poi, category, onClose }: PoiDetailSheetProps) 
         </ActionIcon>
       </Group>
       <ScrollArea.Autosize mah={320}>
-        <PoiDetailContent poi={poi} category={category} />
+        <PoiDetailContent poi={poi} category={category} onEdit={onEdit} onDelete={onDelete} />
       </ScrollArea.Autosize>
     </Paper>
   );
@@ -70,9 +79,13 @@ export function PoiDetailSheet({ poi, category, onClose }: PoiDetailSheetProps) 
 function PoiDetailContent({
   poi,
   category,
+  onEdit,
+  onDelete,
 }: {
   poi: PoiFeature;
   category: PoiCategory | undefined;
+  onEdit: () => void;
+  onDelete: () => void;
 }) {
   const { color, Icon } = categoryVisual(category?.slug);
   const { description, visitedAt } = poi.properties;
@@ -112,6 +125,21 @@ function PoiDetailContent({
       <Text size="xs" c="dimmed" ff="monospace">
         {latitude.toFixed(5)}, {longitude.toFixed(5)}
       </Text>
+
+      <Group gap="xs">
+        <Button size="xs" variant="light" leftSection={<IconPencil size={14} />} onClick={onEdit}>
+          Edit
+        </Button>
+        <Button
+          size="xs"
+          variant="subtle"
+          color="red"
+          leftSection={<IconTrash size={14} />}
+          onClick={onDelete}
+        >
+          Delete
+        </Button>
+      </Group>
     </Stack>
   );
 }

@@ -14,6 +14,7 @@ import { authorization } from './plugins/authorization.js';
 import { healthRoutes } from './routes/health.js';
 import { poiCategoryRoutes } from './routes/poi-categories.js';
 import { poiRoutes } from './routes/pois.js';
+import { geocodingRoutes } from './routes/geocoding.js';
 
 export async function buildApp() {
   const app = Fastify({
@@ -29,7 +30,12 @@ export async function buildApp() {
   app.setSerializerCompiler(serializerCompiler);
 
   await app.register(helmet, { contentSecurityPolicy: false });
-  await app.register(cors, { origin: env.WEB_ORIGIN, credentials: true });
+  await app.register(cors, {
+    origin: env.WEB_ORIGIN,
+    credentials: true,
+    // The default omits the mutating methods the API actually uses.
+    methods: ['GET', 'HEAD', 'POST', 'PATCH', 'DELETE'],
+  });
 
   await app.register(swagger, {
     openapi: {
@@ -52,6 +58,7 @@ export async function buildApp() {
   await app.register(healthRoutes, { prefix: '/api' });
   await app.register(poiCategoryRoutes, { prefix: '/api' });
   await app.register(poiRoutes, { prefix: '/api' });
+  await app.register(geocodingRoutes, { prefix: '/api' });
 
   return app;
 }
