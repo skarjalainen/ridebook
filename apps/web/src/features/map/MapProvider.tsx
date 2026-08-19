@@ -4,10 +4,18 @@ import {
   NavigationControl,
   GeolocateControl,
   ScaleControl,
+  setWorkerUrl,
 } from 'maplibre-gl';
+import maplibreWorkerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url';
 import { useComputedColorScheme } from '@mantine/core';
 import { MapContext, type LayerSetup, type MapContextValue } from './MapContext';
 import { DEFAULT_CENTER, DEFAULT_ZOOM, isMapConfigured, mapStyleUrl } from './mapStyles';
+
+// MapLibre locates its tile-parsing worker relative to its own import.meta.url.
+// Both Vite's dependency pre-bundling and the production build move that module,
+// so the lookup 404s and tiles silently never load. Point it at the worker that
+// Vite bundles for us instead.
+setWorkerUrl(maplibreWorkerUrl);
 
 export function MapProvider({ children }: { children?: ReactNode }) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -71,7 +79,9 @@ export function MapProvider({ children }: { children?: ReactNode }) {
     appliedSchemeRef.current = colorScheme;
     instance.setStyle(mapStyleUrl(colorScheme));
     // setStyle discards custom sources and layers, so they must be re-added.
-    instance.once('styledata', applySetups);
+    // 'styledata' fires before the new style is ready and anything added there
+    // is discarded again, so wait for 'style.load'.
+    instance.once('style.load', applySetups);
   }, [colorScheme, applySetups]);
 
   const registerLayers = useCallback((setup: LayerSetup) => {
