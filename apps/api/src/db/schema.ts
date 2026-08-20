@@ -1,4 +1,4 @@
-import { customType, integer, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
+import { customType, date, integer, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
 import type { PointGeometry } from '@ridebook/shared';
 
 // Values never cross this boundary as WKB: reads go through ST_AsGeoJSON and
@@ -26,6 +26,16 @@ export const pois = pgTable('pois', {
   description: text('description'),
   location: pointGeometry('location').notNull(),
   visitedAt: timestamp('visited_at', { withTimezone: true }),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+});
+
+export const trips = pgTable('trips', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  name: text('name').notNull(),
+  description: text('description'),
+  plannedDate: date('planned_date'),
+  drivenAt: timestamp('driven_at', { withTimezone: true }),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 });
